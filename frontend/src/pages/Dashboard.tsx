@@ -4,6 +4,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import API_BASE_URL from '../config/api';
 
 interface Poll {
   id: number;
@@ -52,7 +53,7 @@ const Dashboard: React.FC = () => {
 
   const fetchUserPolls = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/polls');
+      const response = await axios.get(`${API_BASE_URL}/polls`);
       // Filter out closed polls for the main view
       const activePolls = response.data.polls.filter((poll: Poll) => poll.status !== 'closed');
       setPolls(activePolls);
@@ -63,7 +64,7 @@ const Dashboard: React.FC = () => {
 
   const fetchHistory = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/polls/history/closed');
+      const response = await axios.get(`${API_BASE_URL}/polls/history/closed`);
       setHistory(response.data.history);
     } catch (error) {
       console.error('Failed to fetch history');
@@ -76,7 +77,7 @@ const Dashboard: React.FC = () => {
     }
 
     try {
-      await axios.delete(`http://localhost:5000/api/polls/${pollId}`);
+      await axios.delete(`${API_BASE_URL}/polls/${pollId}`);
       toast.success('Poll deleted successfully');
       fetchUserPolls();
     } catch (error: any) {
@@ -90,7 +91,7 @@ const Dashboard: React.FC = () => {
     }
 
     try {
-      await axios.delete(`http://localhost:5000/api/polls/history/${pollId}`);
+      await axios.delete(`${API_BASE_URL}/polls/history/${pollId}`);
       toast.success('Poll deleted from history successfully');
       fetchHistory();
     } catch (error: any) {

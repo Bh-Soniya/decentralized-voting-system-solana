@@ -9,7 +9,7 @@ const Register: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [passwordError, setPasswordError] = useState('');
+  const [_passwordError, setPasswordError] = useState('');
   const { publicKey } = useWallet();
   const { register } = useAuth();
   const navigate = useNavigate();

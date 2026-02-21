@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { useWallet } from '@solana/wallet-adapter-react';
+import API_BASE_URL from '../config/api';
 
 interface UserProfile {
   id: number;
@@ -42,7 +43,7 @@ const Profile: React.FC = () => {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:5000/api/auth/profile', {
+      const response = await axios.get(`${API_BASE_URL}/auth/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProfile(response.data.user);
@@ -62,7 +63,7 @@ const Profile: React.FC = () => {
 
     try {
       const response = await axios.put(
-        'http://localhost:5000/api/auth/profile',
+        `${API_BASE_URL}/auth/profile`,
         { username, walletAddress },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -113,7 +114,7 @@ const Profile: React.FC = () => {
 
     try {
       await axios.put(
-        'http://localhost:5000/api/auth/change-password',
+        `${API_BASE_URL}/auth/change-password`,
         { currentPassword, newPassword },
         { headers: { Authorization: `Bearer ${token}` } }
       );

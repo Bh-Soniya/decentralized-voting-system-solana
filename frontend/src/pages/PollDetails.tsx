@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { Connection, Transaction, SystemProgram, PublicKey } from '@solana/web3.js';
+import { Connection, Transaction, PublicKey } from '@solana/web3.js';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
+import API_BASE_URL from '../config/api';
 
 interface Option {
   id: number;
@@ -50,7 +51,7 @@ const PollDetails: React.FC = () => {
     if (!token) return;
     
     try {
-      const response = await axios.get(`http://localhost:5000/api/polls/${id}/vote-status`);
+      const response = await axios.get(`${API_BASE_URL}/polls/${id}/vote-status`);
       setHasVoted(response.data.hasVoted);
     } catch (error) {
       console.error('Error checking vote status');
@@ -60,7 +61,7 @@ const PollDetails: React.FC = () => {
 
   const fetchPoll = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/polls/${id}`);
+      const response = await axios.get(`${API_BASE_URL}/polls/${id}`);
       setPoll(response.data.poll);
     } catch (error) {
       toast.error('Failed to fetch poll');
@@ -69,7 +70,7 @@ const PollDetails: React.FC = () => {
 
   const fetchResults = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/polls/${id}/results`);
+      const response = await axios.get(`${API_BASE_URL}/polls/${id}/results`);
       setResults(response.data.results);
     } catch (error) {
       console.error('Failed to fetch results');
@@ -134,7 +135,7 @@ const PollDetails: React.FC = () => {
       await connection.confirmTransaction(signature, 'confirmed');
       
       // Now send to backend with real transaction signature
-      await axios.post('http://localhost:5000/api/polls/vote', {
+      await axios.post(`${API_BASE_URL}/polls/vote`, {
         pollId: id,
         optionIndex: selectedOption,
         transactionSignature: signature,
@@ -156,7 +157,7 @@ const PollDetails: React.FC = () => {
     }
 
     try {
-      await axios.delete(`http://localhost:5000/api/polls/${id}`);
+      await axios.delete(`${API_BASE_URL}/polls/${id}`);
       toast.success('Poll deleted successfully');
       navigate('/dashboard');
     } catch (error: any) {

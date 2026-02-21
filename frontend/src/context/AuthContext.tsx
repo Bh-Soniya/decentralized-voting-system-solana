@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 
 interface User {
   id: number;
@@ -32,7 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [token]);
 
   const login = async (email: string, password: string) => {
-    const response = await axios.post('http://localhost:5000/api/auth/login', {
+    const response = await axios.post(`${API_BASE_URL}/auth/login`, {
       email,
       password,
     });
@@ -43,7 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const register = async (username: string, email: string, password: string, walletAddress?: string) => {
-    const response = await axios.post('http://localhost:5000/api/auth/register', {
+    const response = await axios.post(`${API_BASE_URL}/auth/register`, {
       username,
       email,
       password,
@@ -62,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateWallet = async (walletAddress: string) => {
-    await axios.put('http://localhost:5000/api/auth/wallet', { walletAddress });
+    await axios.put(`${API_BASE_URL}/auth/wallet`, { walletAddress });
     if (user) {
       setUser({ ...user, walletAddress });
     }

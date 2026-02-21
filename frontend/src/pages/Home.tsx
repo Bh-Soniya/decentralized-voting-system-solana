@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import API_BASE_URL from '../config/api';
 
 interface Poll {
   id: number;
@@ -22,7 +23,7 @@ const Home: React.FC = () => {
 
   const fetchPolls = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/polls');
+      const response = await axios.get(`${API_BASE_URL}/polls`);
       setPolls(response.data.polls);
     } catch (error) {
       toast.error('Failed to fetch polls');
