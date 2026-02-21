@@ -1,0 +1,14 @@
+import express from 'express';
+import { register, login, updateWallet, getProfile, updateProfile, changePassword } from '../controllers/authController';
+import { authenticate } from '../middleware/auth';
+
+const router = express.Router();
+
+router.post('/register', register);
+router.post('/login', login);
+router.put('/wallet', authenticate, updateWallet);
+router.get('/profile', authenticate, getProfile);
+router.put('/profile', authenticate, updateProfile);
+router.put('/change-password', authenticate, changePassword);
+
+export default router;
