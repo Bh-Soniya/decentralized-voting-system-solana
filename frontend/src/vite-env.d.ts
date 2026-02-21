@@ -9,3 +9,8 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+// Extend Window interface to include Buffer
+interface Window {
+  Buffer: typeof import('buffer').Buffer;
+}
