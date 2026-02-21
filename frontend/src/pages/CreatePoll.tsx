@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import API_BASE_URL from '../config/api';
+import { datetimeLocalToISO } from '../utils/dateUtils';
 
 interface PollOption {
   text: string;
@@ -46,11 +47,26 @@ const CreatePoll: React.FC = () => {
         return;
       }
 
+      // Validate dates
+      const startDateTime = new Date(startTime);
+      const endDateTime = new Date(endTime);
+
+      if (isNaN(startDateTime.getTime()) || isNaN(endDateTime.getTime())) {
+        toast.error('Invalid date/time selected');
+        return;
+      }
+
+      if (endDateTime <= startDateTime) {
+        toast.error('End time must be after start time');
+        return;
+      }
+
+      // Convert to ISO strings for backend
       const response = await axios.post(`${API_BASE_URL}/polls`, {
         title,
         description,
-        startTime,
-        endTime,
+        startTime: datetimeLocalToISO(startTime),
+        endTime: datetimeLocalToISO(endTime),
         options: filteredOptions,
       });
 

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import API_BASE_URL from '../config/api';
+import { formatLocalDate } from '../utils/dateUtils';
 
 interface Poll {
   id: number;
@@ -58,7 +59,7 @@ const Home: React.FC = () => {
                 <p>{poll.description}</p>
                 <div className="poll-meta">
                   <span className={`status ${poll.status}`}>{poll.status}</span>
-                  <span>Ends: {new Date(poll.endTime).toLocaleDateString()}</span>
+                  <span>Ends: {formatLocalDate(poll.endTime)}</span>
                 </div>
                 <Link to={`/poll/${poll.id}`} className="btn-secondary">
                   View Details

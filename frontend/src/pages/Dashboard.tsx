@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import API_BASE_URL from '../config/api';
+import { formatLocalDate } from '../utils/dateUtils';
 
 interface Poll {
   id: number;
@@ -195,7 +196,7 @@ const Dashboard: React.FC = () => {
                     <div>
                       <h3>{item.title}</h3>
                       <p className="history-meta">
-                        Ended: {new Date(item.endTime).toLocaleDateString()} • {item.totalVotes} votes
+                        Ended: {formatLocalDate(item.endTime)} • {item.totalVotes} votes
                       </p>
                     </div>
                     <div className="history-actions">

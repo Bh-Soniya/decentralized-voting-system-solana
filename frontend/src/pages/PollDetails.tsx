@@ -6,6 +6,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import API_BASE_URL from '../config/api';
+import { formatLocalDateTime } from '../utils/dateUtils';
 
 interface Option {
   id: number;
@@ -195,8 +196,8 @@ const PollDetails: React.FC = () => {
       <p className="poll-description">{poll.description}</p>
 
       <div className="poll-time">
-        <p>Start: {new Date(poll.startTime).toLocaleString()}</p>
-        <p>End: {new Date(poll.endTime).toLocaleString()}</p>
+        <p>Start: {formatLocalDateTime(poll.startTime)}</p>
+        <p>End: {formatLocalDateTime(poll.endTime)}</p>
       </div>
 
       {!hasVoted && poll.status === 'active' && (
