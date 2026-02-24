@@ -7,11 +7,16 @@ export const register = async (req: Request, res: Response) => {
     const { username, email, password, walletAddress } = req.body;
 
     // Password validation
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
     if (!passwordRegex.test(password)) {
       return res.status(400).json({ 
-        message: 'Password must be at least 8 characters long and contain at least 1 uppercase letter, 1 number, and 1 special character (@$!%*?&#)' 
+        message: 'Password must be at least 8 characters long and contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character (@$!%*?&#)' 
       });
+    }
+
+    // Validate wallet address
+    if (!walletAddress || walletAddress.trim() === '') {
+      return res.status(400).json({ message: 'Wallet address is required' });
     }
 
     const existingUser = await User.findOne({ where: { email } });
@@ -19,10 +24,22 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    const user = await User.create({ username, email, password, walletAddress });
+    // Check if wallet is already registered
+    const existingWallet = await User.findOne({ where: { walletAddress } });
+    if (existingWallet) {
+      return res.status(400).json({ message: 'Wallet address is already registered' });
+    }
+
+    const user = await User.create({ 
+      username, 
+      email, 
+      password, 
+      walletAddress,
+      role: 'admin'
+    });
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email: user.email, role: 'admin' },
       process.env.JWT_SECRET || 'secret',
       { expiresIn: '7d' }
     );
@@ -35,6 +52,7 @@ export const register = async (req: Request, res: Response) => {
         username: user.username,
         email: user.email,
         walletAddress: user.walletAddress,
+        role: 'admin',
       },
     });
   } catch (error: any) {
@@ -57,7 +75,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email: user.email, role: 'admin' },
       process.env.JWT_SECRET || 'secret',
       { expiresIn: '7d' }
     );
@@ -70,6 +88,7 @@ export const login = async (req: Request, res: Response) => {
         username: user.username,
         email: user.email,
         walletAddress: user.walletAddress,
+        role: 'admin',
       },
     });
   } catch (error: any) {
@@ -147,10 +166,10 @@ export const changePassword = async (req: Request, res: Response) => {
     }
 
     // Validate new password
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
     if (!passwordRegex.test(newPassword)) {
       return res.status(400).json({ 
-        message: 'Password must be at least 8 characters long and contain at least 1 uppercase letter, 1 number, and 1 special character (@$!%*?&#)' 
+        message: 'Password must be at least 8 characters long and contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character (@$!%*?&#)' 
       });
     }
 

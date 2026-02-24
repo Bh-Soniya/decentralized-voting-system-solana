@@ -1,7 +1,9 @@
 import User from './User';
+import Voter from './Voter';
 import Poll from './Poll';
 import Option from './Option';
 import Vote from './Vote';
+import VotingToken from './VotingToken';
 
 // Define associations
 User.hasMany(Poll, { foreignKey: 'creatorId', as: 'polls' });
@@ -16,4 +18,14 @@ Vote.belongsTo(Poll, { foreignKey: 'pollId', as: 'poll' });
 User.hasMany(Vote, { foreignKey: 'userId', as: 'votes' });
 Vote.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
-export { User, Poll, Option, Vote };
+// Voting Token associations
+Voter.hasMany(VotingToken, { foreignKey: 'voterId', as: 'tokens' });
+VotingToken.belongsTo(Voter, { foreignKey: 'voterId', as: 'voter' });
+
+Poll.hasMany(VotingToken, { foreignKey: 'pollId', as: 'tokens' });
+VotingToken.belongsTo(Poll, { foreignKey: 'pollId', as: 'poll' });
+
+User.hasMany(VotingToken, { foreignKey: 'mintedBy', as: 'mintedTokens' });
+VotingToken.belongsTo(User, { foreignKey: 'mintedBy', as: 'minter' });
+
+export { User, Voter, Poll, Option, Vote, VotingToken };

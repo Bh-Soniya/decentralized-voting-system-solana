@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Poll from '../models/Poll';
 import Option from '../models/Option';
 import Vote from '../models/Vote';
+import VotingToken from '../models/VotingToken';
 import { Connection, PublicKey, Keypair } from '@solana/web3.js';
 
 const connection = new Connection(
@@ -156,6 +157,7 @@ export const castVote = async (req: Request, res: Response) => {
   try {
     const { pollId, optionIndex, transactionSignature, walletAddress } = req.body;
     const userId = (req as any).user.id;
+    const userRole = (req as any).user.role;
 
     const poll = await Poll.findByPk(pollId);
     if (!poll) {
@@ -171,12 +173,33 @@ export const castVote = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Poll has ended' });
     }
 
+    // Check if user already voted
     const existingVote = await Vote.findOne({
       where: { pollId, userId },
     });
 
     if (existingVote) {
       return res.status(400).json({ message: 'You have already voted in this poll' });
+    }
+
+    // TOKEN VALIDATION: Check if voter has a valid token (only for voters)
+    if (userRole === 'voter') {
+      const token = await VotingToken.findOne({
+        where: {
+          voterId: userId,
+          pollId: pollId,
+          status: 'minted',
+        },
+      });
+
+      if (!token) {
+        return res.status(403).json({ 
+          message: 'No valid voting token found. Please contact admin to mint a token for you.',
+          code: 'NO_TOKEN'
+        });
+      }
+
+      console.log('✅ Voting token validated:', token.tokenId);
     }
 
     // Verify the transaction exists on Solana blockchain
@@ -203,6 +226,7 @@ export const castVote = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Failed to verify blockchain transaction' });
     }
 
+    // Record the vote
     const vote = await Vote.create({
       pollId,
       userId,
@@ -211,9 +235,32 @@ export const castVote = async (req: Request, res: Response) => {
       walletAddress,
     });
 
+    // TOKEN COLLECTION: Mark token as collected (only for voters)
+    if (userRole === 'voter') {
+      const token = await VotingToken.findOne({
+        where: {
+          voterId: userId,
+          pollId: pollId,
+          status: 'minted',
+        },
+      });
+
+      if (token) {
+        token.status = 'collected';
+        token.usedAt = new Date();
+        token.transferTransactionSignature = transactionSignature;
+        await token.save();
+        console.log('✅ Token collected from voter:', token.tokenId);
+      }
+    }
+
     console.log('✅ Vote recorded:', { pollId, userId, optionIndex, transactionSignature });
 
-    res.status(201).json({ success: true, vote });
+    res.status(201).json({ 
+      success: true, 
+      vote,
+      message: userRole === 'voter' ? 'Vote cast successfully! Your token has been collected.' : 'Vote cast successfully!'
+    });
   } catch (error: any) {
     console.error('Vote casting error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });

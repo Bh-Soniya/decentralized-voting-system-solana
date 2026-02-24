@@ -7,7 +7,8 @@ interface UserAttributes {
   username: string;
   email: string;
   password: string;
-  walletAddress?: string;
+  walletAddress: string;
+  role: 'admin';
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -19,7 +20,8 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public username!: string;
   public email!: string;
   public password!: string;
-  public walletAddress?: string;
+  public walletAddress!: string;
+  public role!: 'admin';
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
@@ -38,7 +40,6 @@ User.init(
     username: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      unique: true,
     },
     email: {
       type: DataTypes.STRING(100),
@@ -54,8 +55,13 @@ User.init(
     },
     walletAddress: {
       type: DataTypes.STRING(44),
-      allowNull: true,
+      allowNull: false,
       unique: true,
+    },
+    role: {
+      type: DataTypes.ENUM('admin'),
+      allowNull: false,
+      defaultValue: 'admin',
     },
   },
   {

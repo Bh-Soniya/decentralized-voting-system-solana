@@ -38,6 +38,35 @@ const CreatePoll: React.FC = () => {
     }
   };
 
+  const handleImageUpload = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Image size must be less than 2MB');
+      return;
+    }
+
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload an image file');
+      return;
+    }
+
+    // Convert to base64
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      handleOptionChange(index, 'imageUrl', base64String);
+      toast.success('Image uploaded successfully');
+    };
+    reader.onerror = () => {
+      toast.error('Failed to upload image');
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -61,14 +90,30 @@ const CreatePoll: React.FC = () => {
         return;
       }
 
+      // Get token from localStorage
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Please login first');
+        navigate('/login');
+        return;
+      }
+
       // Convert to ISO strings for backend
-      const response = await axios.post(`${API_BASE_URL}/polls`, {
-        title,
-        description,
-        startTime: datetimeLocalToISO(startTime),
-        endTime: datetimeLocalToISO(endTime),
-        options: filteredOptions,
-      });
+      const response = await axios.post(
+        `${API_BASE_URL}/polls`,
+        {
+          title,
+          description,
+          startTime: datetimeLocalToISO(startTime),
+          endTime: datetimeLocalToISO(endTime),
+          options: filteredOptions,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       toast.success('Poll created successfully!');
       navigate(`/poll/${response.data.poll.id}`);
@@ -162,18 +207,41 @@ const CreatePoll: React.FC = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>Image URL (Optional)</label>
-                  <input
-                    type="url"
-                    value={option.imageUrl}
-                    onChange={(e) => handleOptionChange(index, 'imageUrl', e.target.value)}
-                    placeholder="https://example.com/image.jpg"
-                  />
+                  <label>Image (Optional)</label>
+                  <div className="image-upload-options">
+                    <div className="upload-method">
+                      <label className="file-upload-label">
+                        📁 Upload from Device
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleImageUpload(index, e)}
+                          style={{ display: 'none' }}
+                        />
+                      </label>
+                    </div>
+                    <div className="upload-method-divider">OR</div>
+                    <div className="upload-method">
+                      <input
+                        type="url"
+                        value={option.imageUrl}
+                        onChange={(e) => handleOptionChange(index, 'imageUrl', e.target.value)}
+                        placeholder="Enter image URL"
+                      />
+                    </div>
+                  </div>
                   {option.imageUrl && (
                     <div className="image-preview">
                       <img src={option.imageUrl} alt="Preview" onError={(e) => {
                         (e.target as HTMLImageElement).style.display = 'none';
                       }} />
+                      <button
+                        type="button"
+                        className="btn-remove-image"
+                        onClick={() => handleOptionChange(index, 'imageUrl', '')}
+                      >
+                        ✕ Remove Image
+                      </button>
                     </div>
                   )}
                 </div>
@@ -185,9 +253,11 @@ const CreatePoll: React.FC = () => {
           </button>
         </div>
 
-        <button type="submit" className="btn-primary">
-          Create Poll
-        </button>
+        <div className="form-actions-center">
+          <button type="submit" className="btn-primary">
+            Create Poll
+          </button>
+        </div>
       </form>
     </div>
   );

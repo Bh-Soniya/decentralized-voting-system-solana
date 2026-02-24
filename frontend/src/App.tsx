@@ -15,7 +15,9 @@ import CreatePoll from './pages/CreatePoll';
 import PollDetails from './pages/PollDetails';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
+import TokenManagement from './pages/TokenManagement';
 import PrivateRoute from './components/PrivateRoute';
+import AdminRoute from './components/AdminRoute';
 import '@solana/wallet-adapter-react-ui/styles.css';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
@@ -45,9 +47,17 @@ function App() {
                     <Route
                       path="/create-poll"
                       element={
-                        <PrivateRoute>
+                        <AdminRoute>
                           <CreatePoll />
-                        </PrivateRoute>
+                        </AdminRoute>
+                      }
+                    />
+                    <Route
+                      path="/token-management"
+                      element={
+                        <AdminRoute>
+                          <TokenManagement />
+                        </AdminRoute>
                       }
                     />
                     <Route path="/poll/:id" element={<PollDetails />} />
@@ -67,6 +77,8 @@ function App() {
                         </PrivateRoute>
                       }
                     />
+                    <Route path="/voter/dashboard" element={<Dashboard />} />
+                    <Route path="/voter/poll/:id" element={<PollDetails />} />
                   </Routes>
                 </main>
                 <ToastContainer position="top-right" autoClose={3000} />

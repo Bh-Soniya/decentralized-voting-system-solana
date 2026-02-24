@@ -1,0 +1,289 @@
+/* Enhanced Token Management Page Styles */
+.token-header h1 {
+  font-size: 3rem !important;
+  margin-bottom: 10px !important;
+  font-weight: 800 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.token-header p {
+  font-size: 1.2rem !important;
+  opacity: 0.95 !important;
+  font-weight: 500 !important;
+}
+
+.token-content {
+  grid-template-columns: 380px 1fr !important;
+  max-width: 1600px !important;
+}
+
+.poll-selector {
+  border-radius: 25px !important;
+  padding: 30px !important;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2) !important;
+  max-height: 700px !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.poll-selector h2 {
+  margin-bottom: 25px !important;
+  font-size: 1.8rem !important;
+  font-weight: 700 !important;
+}
+
+.poll-list {
+  gap: 15px !important;
+  padding-right: 10px;
+}
+
+.poll-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.poll-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.poll-list::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 10px;
+}
+
+.poll-list::-webkit-scrollbar-thumb:hover {
+  background: #5568d3;
+}
+
+.poll-item-token {
+  padding: 20px !important;
+  border: 2px solid #e8e8e8 !important;
+  border-radius: 15px !important;
+  background: white !important;
+}
+
+.poll-item-token:hover {
+  border-color: #667eea !important;
+  background: #f8f9ff !important;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15) !important;
+}
+
+.poll-item-token.selected {
+  border-color: #667eea !important;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.25) !important;
+  transform: translateX(8px) !important;
+}
+
+.poll-item-token .poll-info h3 {
+  margin: 0 0 10px 0 !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+}
+
+.poll-item-token .poll-id {
+  font-size: 0.8rem !important;
+  color: #888 !important;
+  margin: 8px 0 !important;
+  font-family: 'Courier New', monospace !important;
+  background: #f5f5f5 !important;
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+  display: inline-block !important;
+}
+
+.token-details {
+  border-radius: 25px !important;
+  padding: 35px !important;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2) !important;
+  overflow: hidden !important;
+}
+
+.token-actions-header {
+  margin-bottom: 35px !important;
+  padding-bottom: 25px !important;
+  border-bottom: 3px solid #f0f0f0 !important;
+}
+
+.token-actions-header h2 {
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+}
+
+.token-actions-header .btn-primary {
+  padding: 14px 28px !important;
+  font-size: 1rem !important;
+  border-radius: 12px !important;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3) !important;
+  transition: all 0.3s !important;
+}
+
+.token-actions-header .btn-primary:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4) !important;
+}
+
+.token-summary {
+  gap: 25px !important;
+  margin-bottom: 35px !important;
+}
+
+.summary-card {
+  border-radius: 20px !important;
+  padding: 30px !important;
+  gap: 20px !important;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3) !important;
+  transition: all 0.3s !important;
+}
+
+.summary-card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4) !important;
+}
+
+.summary-icon {
+  font-size: 3rem !important;
+  opacity: 0.9 !important;
+}
+
+.summary-info h3 {
+  margin: 0 0 8px 0 !important;
+  font-size: 2.5rem !important;
+  font-weight: 800 !important;
+}
+
+.summary-info p {
+  font-size: 1rem !important;
+  opacity: 0.95 !important;
+  font-weight: 600 !important;
+}
+
+.token-table {
+  border-radius: 15px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  overflow-x: auto !important;
+}
+
+.token-table table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  width: 100% !important;
+  min-width: 800px !important;
+}
+
+.token-table th {
+  background: #f8f9ff !important;
+  padding: 18px 15px !important;
+  font-weight: 700 !important;
+  color: #667eea !important;
+  border: none !important;
+  font-size: 0.95rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  border-bottom: 2px solid #e0e0e0 !important;
+}
+
+.token-table th:first-child {
+  border-top-left-radius: 0 !important;
+}
+
+.token-table th:last-child {
+  border-top-right-radius: 0 !important;
+}
+
+.token-table td {
+  padding: 18px 15px !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  font-size: 0.95rem !important;
+}
+
+.token-table tr:last-child td {
+  border-bottom: none !important;
+}
+
+.token-id {
+  font-family: 'Courier New', monospace !important;
+  font-size: 0.85rem !important;
+  color: #667eea !important;
+  font-weight: 700 !important;
+  background: #f0f3ff !important;
+  padding: 6px 10px !important;
+  border-radius: 8px !important;
+  display: inline-block !important;
+}
+
+.wallet-addr {
+  font-family: 'Courier New', monospace !important;
+  font-size: 0.85rem !important;
+  color: #666 !important;
+  background: #f5f5f5 !important;
+  padding: 6px 10px !important;
+  border-radius: 8px !important;
+  display: inline-block !important;
+}
+
+.no-tokens {
+  padding: 80px 20px !important;
+}
+
+.no-tokens p:first-child {
+  font-size: 1.3rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 15px !important;
+  color: #333 !important;
+}
+
+.no-tokens p:last-child {
+  font-size: 1rem !important;
+  color: #888 !important;
+}
+
+.no-selection {
+  border-radius: 25px !important;
+  padding: 80px 60px !important;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2) !important;
+}
+
+.no-selection-content .icon {
+  font-size: 6rem !important;
+  margin-bottom: 25px !important;
+  opacity: 0.6 !important;
+}
+
+.no-selection-content h3 {
+  font-size: 2rem !important;
+  margin-bottom: 15px !important;
+  font-weight: 700 !important;
+}
+
+.no-selection-content p {
+  font-size: 1.15rem !important;
+  line-height: 1.6 !important;
+}
+
+@media (max-width: 1024px) {
+  .poll-selector {
+    max-height: 400px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .token-header h1 {
+    font-size: 2.2rem !important;
+  }
+
+  .token-header p {
+    font-size: 1rem !important;
+  }
+
+  .poll-selector,
+  .token-details,
+  .no-selection {
+    padding: 25px !important;
+  }
+}

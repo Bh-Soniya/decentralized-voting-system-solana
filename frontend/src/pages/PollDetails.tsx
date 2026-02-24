@@ -4,7 +4,6 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { Connection, Transaction, PublicKey } from '@solana/web3.js';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useAuth } from '../context/AuthContext';
 import API_BASE_URL from '../config/api';
 import { formatLocalDateTime } from '../utils/dateUtils';
 
@@ -40,7 +39,9 @@ const PollDetails: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [hasVoted, setHasVoted] = useState(false);
   const { publicKey, sendTransaction } = useWallet();
-  const { token } = useAuth();
+  
+  // Get token from localStorage instead of context
+  const getToken = () => localStorage.getItem('token');
 
   useEffect(() => {
     fetchPoll();
@@ -49,10 +50,13 @@ const PollDetails: React.FC = () => {
   }, [id]);
 
   const checkIfVoted = async () => {
+    const token = getToken();
     if (!token) return;
     
     try {
-      const response = await axios.get(`${API_BASE_URL}/polls/${id}/vote-status`);
+      const response = await axios.get(`${API_BASE_URL}/polls/${id}/vote-status`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setHasVoted(response.data.hasVoted);
     } catch (error) {
       console.error('Error checking vote status');
@@ -79,8 +83,10 @@ const PollDetails: React.FC = () => {
   };
 
   const handleVote = async () => {
+    const token = getToken();
     if (!token) {
       toast.error('Please login to vote');
+      navigate('/login');
       return;
     }
 
@@ -141,6 +147,8 @@ const PollDetails: React.FC = () => {
         optionIndex: selectedOption,
         transactionSignature: signature,
         walletAddress: publicKey.toString(),
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
       });
 
       toast.success(`Vote cast successfully! Transaction: ${signature.slice(0, 8)}...`);
@@ -148,17 +156,26 @@ const PollDetails: React.FC = () => {
       fetchResults();
     } catch (error: any) {
       console.error('Voting error:', error);
-      toast.error(error.message || 'Failed to cast vote');
+      toast.error(error.response?.data?.message || error.message || 'Failed to cast vote');
     }
   };
 
   const handleDeletePoll = async () => {
+    const token = getToken();
+    if (!token) {
+      toast.error('Please login first');
+      navigate('/login');
+      return;
+    }
+
     if (!window.confirm('Are you sure you want to delete this poll? This action cannot be undone.')) {
       return;
     }
 
     try {
-      await axios.delete(`${API_BASE_URL}/polls/${id}`);
+      await axios.delete(`${API_BASE_URL}/polls/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       toast.success('Poll deleted successfully');
       navigate('/dashboard');
     } catch (error: any) {

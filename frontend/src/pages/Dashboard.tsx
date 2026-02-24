@@ -38,16 +38,26 @@ const Dashboard: React.FC = () => {
   const [polls, setPolls] = useState<Poll[]>([]);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [activeTab, setActiveTab] = useState<'polls' | 'history'>('polls');
-  const { user, updateWallet } = useAuth();
+  const { user: authUser, updateWallet } = useAuth();
   const { publicKey } = useWallet();
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
     fetchUserPolls();
     fetchHistory();
+    // Get user from localStorage to check role
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        setCurrentUser(JSON.parse(userStr));
+      } catch (e) {
+        console.error('Failed to parse user data');
+      }
+    }
   }, []);
 
   useEffect(() => {
-    if (publicKey && (!user?.walletAddress || user.walletAddress !== publicKey.toString())) {
+    if (publicKey && (!authUser?.walletAddress || authUser.walletAddress !== publicKey.toString())) {
       handleUpdateWallet();
     }
   }, [publicKey]);
@@ -121,13 +131,16 @@ const Dashboard: React.FC = () => {
     <div className="dashboard">
       <div className="dashboard-header">
         <h1>Dashboard</h1>
-        <Link to="/create-poll" className="btn-primary">
-          Create New Poll
-        </Link>
+        {/* Only show Create New Poll button for Admin users */}
+        {currentUser?.role === 'admin' && (
+          <Link to="/create-poll" className="btn-primary">
+            Create New Poll
+          </Link>
+        )}
       </div>
 
       <div className="user-info">
-        <h3>Welcome, {user?.username}!</h3>
+        <h3>Welcome, {currentUser?.username || authUser?.username}!</h3>
         {publicKey && (
           <p className="wallet-address">
             Wallet: {publicKey.toString().slice(0, 8)}...{publicKey.toString().slice(-8)}

@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import sequelize from './config/database';
 import authRoutes from './routes/authRoutes';
 import pollRoutes from './routes/pollRoutes';
+import unifiedAuthRoutes from './routes/unifiedAuthRoutes';
+import tokenRoutes from './routes/tokenRoutes';
 import './models';
 
 dotenv.config();
@@ -17,6 +19,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/polls', pollRoutes);
+app.use('/api/unified-auth', unifiedAuthRoutes);
+app.use('/api/tokens', tokenRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
@@ -27,8 +31,7 @@ const startServer = async () => {
     await sequelize.authenticate();
     console.log('Database connected successfully');
 
-    // Use force: true only in development to recreate tables
-    // In production, use migrations instead
+    // Use force: true in development to recreate tables
     if (process.env.NODE_ENV === 'development') {
       await sequelize.sync({ force: true });
       console.log('Database synchronized (development mode - tables recreated)');
